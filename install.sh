@@ -1,6 +1,12 @@
 #!/usr/bin/env sh
-# rtk installer - https://github.com/rtk-ai/rtk
-# Usage: curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh
+# rtk installer (fork: telemetry removed) - https://github.com/masa0209/rtk
+# Usage: curl -fsSL https://raw.githubusercontent.com/masa0209/rtk/refs/heads/master/install.sh | sh
+#
+# NOTE: This fork does not publish prebuilt binaries (no GitHub Releases).
+# Prefer building from source:
+#   cargo install --git https://github.com/masa0209/rtk
+# or, from a local clone:
+#   cargo install --path . --force
 
 set -e
 

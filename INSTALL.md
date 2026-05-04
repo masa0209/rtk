@@ -1,11 +1,17 @@
 # RTK Installation Guide - For AI Coding Assistants
 
+> **This is a fork of [`rtk-ai/rtk`](https://github.com/rtk-ai/rtk) with telemetry removed.**
+> No outbound network calls are made by `rtk`, `rtk gain`, or any subcommand.
+> Fork repository: [`masa0209/rtk`](https://github.com/masa0209/rtk).
+> This fork does **not** publish prebuilt binaries — install from source (see below).
+
 ## ⚠️ Name Collision Warning
 
 **There are TWO completely different projects named "rtk":**
 
-1. ✅ **Rust Token Killer** (this project) - LLM token optimizer
-   - Repos: `rtk-ai/rtk`
+1. ✅ **Rust Token Killer** (this project, fork) - LLM token optimizer
+   - Upstream: `rtk-ai/rtk`
+   - This fork: `masa0209/rtk` (telemetry removed)
    - Has `rtk gain` command for token savings stats
 
 2. ❌ **Rust Type Kit** (reachingforthejack/rtk) - DIFFERENT PROJECT
@@ -41,31 +47,33 @@ If you accidentally installed Rust Type Kit:
 cargo uninstall rtk
 ```
 
-### Quick Install (Linux/macOS)
+### Recommended: Build from Source (this fork)
+
+This fork does not ship prebuilt binaries. Use cargo to build from source:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/master/install.sh | sh
+# From the fork repository (telemetry removed)
+cargo install --git https://github.com/masa0209/rtk
+
+# OR, from a local clone of the fork
+git clone https://github.com/masa0209/rtk.git
+cd rtk
+cargo install --path . --force
 ```
 
 After installation, **verify you have the correct rtk**:
 ```bash
-rtk gain  # Must show token savings stats (not "command not found")
+rtk --version    # Should print "rtk x.y.z"
+rtk gain         # Must show token savings stats (not "command not found")
 ```
 
-### Alternative: Manual Installation
+> ⚠️ Do **not** run `cargo install rtk` (crates.io). The crates.io package is the
+> upstream build with telemetry still enabled and may also resolve to a
+> completely unrelated crate. Always install from this fork's git repository.
 
-```bash
-# From rtk-ai repository (NOT reachingforthejack!)
-cargo install --git https://github.com/rtk-ai/rtk
-
-# OR (if published and correct on crates.io)
-cargo install rtk
-
-# ALWAYS VERIFY after installation
-rtk gain  # MUST show token savings, not "command not found"
-```
-
-⚠️ **WARNING**: `cargo install rtk` from crates.io might install the wrong package. Always verify with `rtk gain`.
+> ⚠️ The `install.sh` script in this repository targets GitHub Releases, but
+> this fork does not publish releases. The `curl | sh` flow will fail until
+> releases are published. Stick to `cargo install --git ...` above.
 
 ## Project Initialization
 
@@ -178,8 +186,8 @@ rtk init --show
 
 ### First-Time User (Recommended)
 ```bash
-# 1. Install RTK
-cargo install --git https://github.com/rtk-ai/rtk
+# 1. Install RTK from this fork (telemetry removed)
+cargo install --git https://github.com/masa0209/rtk
 rtk gain  # Verify (must show token stats)
 
 # 2. Setup with prompts
@@ -351,15 +359,16 @@ source ~/.bashrc  # or source ~/.zshrc
 ```
 
 ### RTK command not available (e.g., vitest)
+
+This fork's `master` branch already includes pnpm / vitest / Next.js / TypeScript /
+Playwright / Prisma support, so a feature-branch switch is **not** required.
+If a command is missing, make sure you are on the fork's master and rebuild:
+
 ```bash
-# Check branch
 cd /path/to/rtk
-git branch
-
-# Switch to feat/vitest-support if needed
-git checkout feat/vitest-support
-
-# Reinstall
+git remote -v        # Should point to github.com/masa0209/rtk
+git checkout master
+git pull
 cargo install --path . --force
 ```
 
@@ -374,13 +383,40 @@ cargo build --release
 cargo install --path . --force
 ```
 
+### Verify the fork has no outbound network calls
+
+A helper script ships with this fork to give static + runtime evidence
+that no telemetry or HTTP client is linked into the binary:
+
+```bash
+# Static checks only (cargo tree + source scan + binary strings/symbols)
+bash scripts/verify-no-network.sh
+
+# Also run a runtime lsof probe against `rtk gain`
+bash scripts/verify-no-network.sh --runtime
+```
+
+For best results, build a release binary first (`cargo build --release`)
+so the script can also inspect linked symbols and embedded strings.
+
 ## Support and Contributing
 
-- **Website**: https://www.rtk-ai.app
-- **Contact**: contact@rtk-ai.app
-- **Troubleshooting**: See [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for common issues
-- **GitHub issues**: https://github.com/rtk-ai/rtk/issues
-- **Pull Requests**: https://github.com/rtk-ai/rtk/pulls
+This is a personal fork. General RTK support, the official website, and the
+Discord community are all operated by upstream and apply to the upstream
+build (which still ships telemetry). Use them at your own discretion.
+
+**Upstream (rtk-ai/rtk) — original project, telemetry enabled:**
+- Website: https://www.rtk-ai.app
+- Contact: contact@rtk-ai.app
+- Issues: https://github.com/rtk-ai/rtk/issues
+- Pull Requests: https://github.com/rtk-ai/rtk/pulls
+
+**This fork (masa0209/rtk) — telemetry removed:**
+- Source: https://github.com/masa0209/rtk
+- Bug reports specific to telemetry-removal changes or fork-only fixes
+  should be filed on the fork. General RTK functionality issues are best
+  reported upstream after reproducing on the upstream build.
+- Local docs: [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)
 
 ⚠️ **If you installed the wrong rtk (Type Kit)**, see [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md#problem-rtk-gain-command-not-found)
 
@@ -389,7 +425,7 @@ cargo install --path . --force
 Before each session:
 
 - [ ] Verify RTK is installed: `rtk --version`
-- [ ] If not installed → follow "Install from fork"
+- [ ] If not installed → follow "Recommended: Build from Source (this fork)"
 - [ ] If project not initialized → `rtk init`
 - [ ] Use `rtk` for ALL git/pnpm/test/vitest commands
 - [ ] Check savings: `rtk gain`

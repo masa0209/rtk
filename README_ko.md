@@ -7,6 +7,10 @@
 </p>
 
 <p align="center">
+  <em>이 저장소는 <a href="https://github.com/rtk-ai/rtk">rtk-ai/rtk</a>의 포크이며 텔레메트리가 제거되었습니다. / This is a fork of rtk-ai/rtk with telemetry removed.</em>
+</p>
+
+<p align="center">
   <a href="https://github.com/rtk-ai/rtk/actions"><img src="https://github.com/rtk-ai/rtk/workflows/Security%20Check/badge.svg" alt="CI"></a>
   <a href="https://github.com/rtk-ai/rtk/releases"><img src="https://img.shields.io/github/v/release/rtk-ai/rtk" alt="Release"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT"></a>
